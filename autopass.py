@@ -40,18 +40,14 @@ class UPass():
 
         # get upassbc website and make sure the connection is good (200)
         requestSite = r.get(UPASS_TRANSLINK_URL, verify=False)
-
         # select school from dropdown and make sure connection to authentication site is good
-        requestSelectSchool = r.post(
-            'https://upassbc.translink.ca/', data={'PsiId': 'ubc'}, verify=False)
-        assert (requestSite.status_code == 200), "r1_error_status"
-        assert (requestSite.url
-                == UPASS_TRANSLINK_URL), "requestSite error: cannot access translink upass website"
+        requestSelectSchool = r.post('https://upassbc.translink.ca/', data={'PsiId': 'ubc'}, verify=False)
 
-        assert (requestSelectSchool.status_code
-                == 200), "requestSelectSchool_error_status"
-        assert (requestSelectSchool.url.startswith(UPASS_URL_POST)
-                ), "requestSelectSchool error: chosen school does not match authentication site"
+        assert (requestSite.status_code == 200), "r1_error_status"
+        assert (requestSite.url == UPASS_TRANSLINK_URL), "requestSite error: cannot access translink upass website"
+
+        assert (requestSelectSchool.status_code == 200), "requestSelectSchool_error_status"
+        assert (requestSelectSchool.url.startswith(UPASS_URL_POST)), "requestSelectSchool error: chosen school does not match authentication site"
 
         # parse signin form, get all the hidden fields, combined them with username and password in the config file
         # tree = html.fromstring(requestSelectSchool.content)
