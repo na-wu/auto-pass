@@ -3,10 +3,10 @@ test.html
 config.json
 
 
-# ignore node-related files
+
 node_modules
 package.json
 package-lock.json
 
-# ignore testpython script
+
 testpython.py
