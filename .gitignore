@@ -6,6 +6,5 @@ page_elements.py
 request.py
 mysite
 __pycache__
-Procfile
 app.yaml
 appengine_config.py
