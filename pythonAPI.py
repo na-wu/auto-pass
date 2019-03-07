@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_restful import Resource, Api
 from sqlalchemy import create_engine
 from json import dumps
@@ -29,6 +29,9 @@ XPATH_UBC = {"username_field": "//*[@id='username']",
                 "password_field": "//*[@id='password']",
                 "login": "//*[@id='_eventId_proceed']"}
 
+UBC_USER = page_elements.username
+UBC_PASS = page_elements.password
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -45,12 +48,15 @@ def ubc_login(driver, username, password):
     password_field = driver.find_element_by_xpath(XPATH_UBC["password_field"])
     password_field.clear()
     password_field.send_keys(password)
+    temp_url = driver.current_url
+    assert(temp_url.startswith("https://authentication.ubc.ca/idp/profile"))
     driver.find_element_by_name("_eventId_proceed").click()
     #XPATH_UBC["login"]
 
 def select_ubc_upass(driver):
     driver.find_element_by_xpath(XPATH_UPASS["school_select"]).click()
     driver.find_element_by_xpath(XPATH_UPASS["ubc"]).click()
+    assert(driver.current_url == target_url)
     # element = driver.find_element_by_xpath("//*[@id='goButton']")
     # actions = ActionChains(driver)
     # actions.move_to_element(element).perform()
@@ -67,17 +73,27 @@ def request_ubc_upass(driver):
     driver.find_element_by_xpath(XPATH_UPASS["request_pass"]).click()
 
 def request_script():
-    ubc_username = ''
-    ubc_password = ''
+
+    # Declare CWL Username and Password
+    ubc_username = UBC_USER
+    ubc_password = UBC_PASS
+
+    # Instantiate Web Driver
     driver = setup_webdriver()
+
+    # Select UBC as Institution from TransLink Website
     select_ubc_upass(driver)
     ubc_login(driver, ubc_username, ubc_password)
     # request_ubc_upass(driver)
     return "200"
 
 
+@app.route("/")
+def home():
+    return render_template("index.html")
 
 @app.route('/autopass', methods=['GET'])
+# @app.route("/")
 def autopass():
     try:
         request_script()
