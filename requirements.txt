@@ -1,0 +1,6 @@
+Flask
+Werkzeug
+django
+gunicorn
+django-heroku
+requests

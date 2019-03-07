@@ -7,6 +7,5 @@ request.py
 mysite
 __pycache__
 Procfile
-requirements.txt
 app.yaml
 appengine_config.py
