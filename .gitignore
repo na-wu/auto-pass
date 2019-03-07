@@ -1,9 +1,6 @@
 upass.py
 test.html
 config.json
-node_modules
-package.json
-package-lock.json
 testpython.py
 page_elements.py
 request.py
