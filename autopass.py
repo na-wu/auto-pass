@@ -4,7 +4,7 @@
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from typing import Dict, List
-from lxml import html, etree
+# from lxml import html, etree
 import json
 import os
 import requests
@@ -26,13 +26,13 @@ UPASS_URL_POST = 'https://authentication.ubc.ca/idp/profile/SAML2'
 class UPass():
     def __init__(self):
         self.load_config_files()
-        print "Object created"
+        print("Object created")
 
     def load_config_files(self):
-        print "Config files loaded successfully"
+        print("Config files loaded successfully")
 
     def request(self):
-        print "Attempting to request"
+        print("Attempting to request")
         self.requestPass()
 
     def requestPass(self):
@@ -43,27 +43,25 @@ class UPass():
         # select school from dropdown and make sure connection to authentication site is good
         requestSelectSchool = r.post('https://upassbc.translink.ca/', data={'PsiId': 'ubc'}, verify=False)
 
-        assert (requestSite.status_code == 200), "r1_error_status"
-        assert (requestSite.url == UPASS_TRANSLINK_URL), "requestSite error: cannot access translink upass website"
+        assert(requestSite.status_code == 200), "r1_error_status"
+        assert(requestSite.url == UPASS_TRANSLINK_URL), "requestSite error: cannot access translink upass website"
 
-        assert (requestSelectSchool.status_code == 200), "requestSelectSchool_error_status"
-        assert (requestSelectSchool.url.startswith(UPASS_URL_POST)), "requestSelectSchool error: chosen school does not match authentication site"
+        assert(requestSelectSchool.status_code == 200), "requestSelectSchool_error_status"
+        assert(requestSelectSchool.url.startswith(UPASS_URL_POST)), "requestSelectSchool error: chosen school does not match authentication site"
 
         # parse signin form, get all the hidden fields, combined them with username and password in the config file
         # tree = html.fromstring(requestSelectSchool.content)
         # form = tree.find('.//form[@class="signin-form"]')
         # hidden_fields = form.findall('.//input[@type="hidden"]')
-
-            # school_data: Dict[str, str] = self.school_user_pass
+        #             # school_data: Dict[str, str] = self.school_user_pass
             # for hidden_field in hidden_fields:
             #     school_data[hidden_field.name] = hidden_field.value
 
         # signin post request
-        r3 = r.post(
-            requestSelectSchool.url, data={'username' : 'USERNAME', 'password' : 'PASSWORD'})
+        r3 = r.post(requestSelectSchool.url, data={'username' : 'na211041', 'password' : 'Jameswu_1998'})
 
-        assert (r3.status_code == 200), "r3_error_status"
-        # assert (r3.url.startswith(
+        assert(r3.status_code == 200), "r3_error_status"
+        # assert(r3.url.startswith(
         #     'https://idp.sfu.ca/idp/profile')), "r3_error_url"
 
         # below request r4 and r5 are due to python requests library doesn't load javascript in the webpage,
@@ -76,8 +74,8 @@ class UPass():
             translink_data[field.name] = field.value
         r4 = r.post('https://upassadfs.translink.ca/adfs/ls/',
                     data=translink_data)
-        assert (r4.status_code == 200), "r4_error_status"
-        assert (r4.url == 'https://upassadfs.translink.ca/adfs/ls/'), "r4_error_status"
+        assert(r4.status_code == 200), "r4_error_status"
+        assert(r4.url == 'https://upassadfs.translink.ca/adfs/ls/'), "r4_error_status"
 
         tree = html.fromstring(r4.content)
         form = tree.find('.//form')
@@ -86,8 +84,8 @@ class UPass():
         for field in fields:
             data[field.name] = field.value
         r5 = r.post('https://upassbc.translink.ca/fs/', data=data)
-        assert (r5.status_code == 200), "r5 error"
-        assert (r5.url == 'https://upassbc.translink.ca/fs/'), "r5 error: could not log into translink from your school website "
+        assert(r5.status_code == 200), "r5 error"
+        assert(r5.url == 'https://upassbc.translink.ca/fs/'), "r5 error: could not log into translink from your school website "
 
         # check if there are new month eligibility need to request
         tree = html.fromstring(r5.content)
@@ -106,7 +104,7 @@ class UPass():
             print('Request new month eligibility')
             r6 = r.post(
                 'https://upassbc.translink.ca/fs/Eligibility/Request/', data=data)
-            assert (r6.status_code == 200), "r6 error"
+            assert(r6.status_code == 200), "r6 error"
             # print(r6.url)
             # assert(r6.url.startswith('https://upassbc.translink.ca/'))
 
@@ -123,7 +121,7 @@ class UPass():
 def main():
     autopass = UPass()
     autopass.request()
-    print "Successfully Requested"
+    print("Successfully Requested")
 
 
 if __name__ == '__main__':

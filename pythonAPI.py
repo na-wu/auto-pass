@@ -65,8 +65,10 @@ def select_ubc_upass(driver):
     #XPATH_UPASS["ok"]
 
 def request_ubc_upass(driver):
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, XPATH_UPASS["checkbox"])))
-    checkbox = driver.find_element_by_xpath(XPATH_UPASS["checkbox"])
+    # WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, XPATH_UPASS["checkbox"])))
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "chk_1")))
+    # checkbox = driver.find_element_by_xpath(XPATH_UPASS["checkbox"])
+    checkbox = driver.find_element_by_id("chk_1")
     actions = ActionChains(driver)
     actions.move_to_element(checkbox).perform()
     checkbox.click()
@@ -84,7 +86,7 @@ def request_script():
     # Select UBC as Institution from TransLink Website
     select_ubc_upass(driver)
     ubc_login(driver, ubc_username, ubc_password)
-    # request_ubc_upass(driver)
+    request_ubc_upass(driver)
     return "200"
 
 
